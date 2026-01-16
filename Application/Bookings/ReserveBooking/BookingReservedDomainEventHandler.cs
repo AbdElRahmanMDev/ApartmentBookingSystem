@@ -1,0 +1,44 @@
+﻿using Application.Abstraction.Email;
+using Domain.Bookings;
+using Domain.Bookings.Events;
+using Domain.User;
+using MediatR;
+
+namespace Application.Bookings.ReserveBooking;
+
+internal sealed class BookingReservedDomainEventHandler : INotificationHandler<BookingReservedDomainEvent>
+{
+
+    private readonly IBookingRepository _bookingRepository;
+    private readonly IUserRepository _userRepository;
+    private readonly IEmailService _emailService;
+
+    public BookingReservedDomainEventHandler(IBookingRepository bookingRepository,
+        IUserRepository userRepository, 
+        IEmailService emailService)
+    {
+        _bookingRepository = bookingRepository;
+        _userRepository = userRepository;
+        _emailService = emailService;
+    }
+
+
+
+    public async Task Handle(BookingReservedDomainEvent notification, CancellationToken cancellationToken)
+    {
+        var booking=await _bookingRepository.GetByIdAsync(notification.BookingId, cancellationToken);
+
+        if(booking is null)
+        {
+            return;
+        }
+
+        var user=await _userRepository.GetById(booking.UserId, cancellationToken);
+
+        if(user is null)
+        {
+            return;
+        }
+        await _emailService.SendEmailAsync(user.Email, "Booking Reserved", "You Have 10 minutes to confirm this booking!");
+    }
+}
