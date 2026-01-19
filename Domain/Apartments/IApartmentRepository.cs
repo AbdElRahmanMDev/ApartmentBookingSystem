@@ -1,8 +1,7 @@
-﻿namespace Domain.Apartments
+﻿namespace Domain.Apartments;
+
+public interface IApartmentRepository
 {
-    public interface IApartmentRepository
-    {
-        Task<Apartment?> GetById(Guid id, CancellationToken cancellationToken = default);
-        void Add(Apartment apartment);
-    }
+    Task<Apartment?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
+    void Add(Apartment apartment);
 }

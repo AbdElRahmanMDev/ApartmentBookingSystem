@@ -1,5 +1,6 @@
 ﻿using Application.Abstraction.Clock;
 using Application.Abstraction.Messaging;
+using Application.Exceptions;
 using Domain.Abstraction;
 using Domain.Apartments;
 using Domain.Bookings;
@@ -37,7 +38,7 @@ namespace Application.Bookings.ReserveBooking
         public async Task<Result<Guid>> Handle(ReserveBookingCommand request, CancellationToken cancellationToken)
         {
 
-            var user = await _userRepository.GetById(request.UserId, cancellationToken);
+            var user = await _userRepository.GetByIdAsync(request.UserId, cancellationToken);
 
             if (user is null)
             {
@@ -45,7 +46,7 @@ namespace Application.Bookings.ReserveBooking
             }
 
 
-            var apartment = await _apartmentRepository.GetById(request.ApartmentId, cancellationToken);
+            var apartment = await _apartmentRepository.GetByIdAsync(request.ApartmentId, cancellationToken);
 
             if (apartment is null)
             {
@@ -60,13 +61,22 @@ namespace Application.Bookings.ReserveBooking
             }
 
 
-            var booking = Booking.Create(apartment, user.Id, duration, _dateTimeProvider.UtcNow, _pricingService);
+            try
+            {
+                var booking = Booking.Create(apartment, user.Id, duration, _dateTimeProvider.UtcNow, _pricingService);
 
-            await _bookingRepository.AddAsync(booking);
+                //await _bookingRepository.Add(booking);
 
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
+                await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return Result.Success(booking.Id);
+                return Result.Success(booking.Id);
+            }
+            catch (ConcurrencyException)
+            {
+                return Result.Failure<Guid>(BookingErrors.Overlap);
+            }
+
+
         }
     }
 }

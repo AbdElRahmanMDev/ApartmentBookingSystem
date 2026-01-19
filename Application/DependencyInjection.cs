@@ -1,4 +1,6 @@
-﻿using Domain.Bookings;
+﻿using Application.Abstraction.Behaviors;
+using Domain.Bookings;
+using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
 
@@ -11,7 +13,14 @@ public static class DependencyInjection
         services.AddMediatR(config =>
         {
             config.RegisterServicesFromAssemblies(typeof(DependencyInjection).Assembly);
+
+            config.AddOpenBehavior(typeof(LoggingBehavior<,>));
+
+            config.AddOpenBehavior(typeof(ValidationBehavior<,>));
+
         });
+
+        services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly);
 
         services.AddTransient<PricingService>();
         return services;
