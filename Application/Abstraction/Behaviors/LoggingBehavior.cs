@@ -1,15 +1,16 @@
-﻿using Application.Abstraction.Messaging;
-using MediatR;
+﻿using MediatR;
 using Microsoft.Extensions.Logging;
+using Serilog.Context;
 
 namespace Application.Abstraction.Behaviors;
 
 public class LoggingBehavior<TRequest, TResponse>
     : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : IBaseCommand
+    where TRequest : IBaseRequest
+    where TResponse : Result
 {
-    private readonly ILogger<TRequest> _logger;
-    public LoggingBehavior(ILogger<TRequest> logger)
+    private readonly ILogger<LoggingBehavior<TRequest, TResponse>> _logger;
+    public LoggingBehavior(ILogger<LoggingBehavior<TRequest, TResponse>> logger)
     {
         _logger = logger;
     }
@@ -22,14 +23,29 @@ public class LoggingBehavior<TRequest, TResponse>
 
         try
         {
-            _logger.LogInformation($"Started executing {name}");
+            _logger.LogInformation("Started executing {Request}", name);
             var response = await next();
-            _logger.LogInformation($"Finished executing {name}");
+
+            if (response.IsSuccess)
+            {
+                _logger.LogInformation("Finished executing {Request}", name);
+
+            }
+            else
+            {
+                using (LogContext.PushProperty("Error", response.Error, true))
+                {
+                    _logger.LogError("Request {Request} processed with error ", name);
+
+                }
+
+            }
+
             return response;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Error occurred while executing {name}");
+            _logger.LogError(ex, "Error occurred while executing {name}", name);
 
             throw;
         }

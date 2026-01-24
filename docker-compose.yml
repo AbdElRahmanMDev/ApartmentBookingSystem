@@ -1,0 +1,36 @@
+services:
+  api:
+    image: ${DOCKER_REGISTRY-}api
+    container_name: api-dev
+    build:
+      context: .
+      dockerfile: API/Dockerfile
+    depends_on:
+      - postgres
+      - seq
+  
+  seq:
+     image: datalust/seq:latest
+     container_name: seq
+     environment:
+       - ACCEPT_EULA=Y
+       - SEQ_FIRSTRUN_NOAUTHENTICATION=true
+     ports:
+        - "5341:5341"
+        - "8081:80"
+     restart: unless-stopped
+  
+  postgres:
+    image: postgres:16
+    container_name: pg-dev
+    environment:
+      POSTGRES_USER: appuser
+      POSTGRES_PASSWORD: StrongPass123!
+      POSTGRES_DB: appdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:

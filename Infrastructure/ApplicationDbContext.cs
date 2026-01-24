@@ -1,5 +1,6 @@
 ﻿using Application.Exceptions;
 using Domain.Abstraction;
+using Infrastructure.Configurations;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
@@ -20,7 +21,7 @@ namespace Infrastructure
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(BookingConfigurations).Assembly);
             base.OnModelCreating(modelBuilder);
 
         }

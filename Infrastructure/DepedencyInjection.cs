@@ -24,7 +24,7 @@ namespace Infrastructure
             services.AddTransient<IEmailService, EmailService>();
 
             var connectionstring =
-                configuration.GetConnectionString("DefaultConnection") ??
+                configuration.GetConnectionString("Default") ??
                 throw new ArgumentException(nameof(configuration));
 
             services.AddDbContext<ApplicationDbContext>(

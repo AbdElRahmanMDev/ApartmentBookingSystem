@@ -2,4 +2,9 @@
 
 namespace Domain.Apartments;
 
-public record PricingDetails(Money priceForPeriod, Money CleaningFee, Money amenitiesUpCharge, Money TotalPerice);
+public sealed record PricingDetails(
+    Money PriceForPeriod,
+    Money CleaningFee,
+    Money AmenitiesUpCharge,
+    Money TotalPrice
+);

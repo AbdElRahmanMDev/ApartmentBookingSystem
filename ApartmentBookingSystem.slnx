@@ -3,9 +3,13 @@
     <File Path=".gitignore" />
   </Folder>
   <Folder Name="/src/">
+    <Project Path="API/API.csproj" Id="249204a3-829c-43f3-b794-6790b58b15ee" />
     <Project Path="Application/Application.csproj" Id="515d607f-9720-493e-bc5c-676b9a737779" />
     <Project Path="Domain/Domain.csproj" />
     <Project Path="Infrastructure/Infrastructure.csproj" Id="d613e239-4388-4b9c-91cc-151814db4ff1" />
   </Folder>
   <Folder Name="/test/" />
+  <Project Path="docker-compose.dcproj">
+    <Build />
+  </Project>
 </Solution>

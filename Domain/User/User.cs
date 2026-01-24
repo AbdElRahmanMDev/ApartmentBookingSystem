@@ -12,9 +12,16 @@ namespace Domain.User
             Email email)
             : base(id)
         {
+            FirstName = firstName;
+            LastName = lastName;
+            Email = email;
 
         }
 
+        private User()
+        {
+
+        }
         public FirstName FirstName { get; private set; }
 
         public LastName LastName { get; private set; }
