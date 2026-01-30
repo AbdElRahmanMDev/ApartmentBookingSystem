@@ -23,7 +23,6 @@ namespace Infrastructure
         {
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(BookingConfigurations).Assembly);
             base.OnModelCreating(modelBuilder);
-
         }
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
@@ -65,11 +64,6 @@ namespace Infrastructure
             {
                 await _publisher.Publish(domainEvent, cancellationToken: CancellationToken.None);
             }
-
-
-
-
-
         }
     }
 }
